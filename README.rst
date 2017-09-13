@@ -1,5 +1,6 @@
 Magnivore
 #########
+|Pypi|
 
 A data migration tool built to make migrating entire databases as simple as
 writing json migration rules.
@@ -66,3 +67,6 @@ Troubleshooting
 
 Currently there is poor support for table names that contain dashes, so ensure
 that your table names have no dashes.
+
+.. |Pypi| image:: https://img.shields.io/pypi/v/magnivore.svg?maxAge=3600&style=flat-square
+   :target: https://pypi.python.org/pypi/magnivore
