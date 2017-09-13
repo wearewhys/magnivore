@@ -56,6 +56,11 @@ execute them with::
 
     magnivore run myrules.json
 
+Documentation
+#############
+
+You can find the full documentation at http://magnivore.readthedocs.io
+
 Troubleshooting
 ###############
 
