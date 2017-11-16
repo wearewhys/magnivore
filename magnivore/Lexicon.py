@@ -18,15 +18,30 @@ class Lexicon:
         except AttributeError:
             return None
 
-    @staticmethod
-    def basic(rule, target):
+    @classmethod
+    def _dot_reduce(cls, rule_from, target):
+        """
+        A shorthand for _dot and reduce.
+        """
+        return reduce(cls._dot, rule_from.split('.'), target)
+
+    @classmethod
+    def basic(cls, rule, target):
         """
         The basic-most rule, which simply produces the requested value.
         """
-        return reduce(Lexicon._dot, rule.split('.'), target)
+        return cls._dot_reduce(rule, target)
 
-    @staticmethod
-    def format(rule, target):
+    @classmethod
+    def factor(cls, rule, target):
+        """
+        The factor rule multiplies the value by a factor.
+        """
+        value = cls._dot_reduce(rule['from'], target)
+        return value * rule['factor']
+
+    @classmethod
+    def format(cls, rule, target):
         """
         The format rule produces a formatted string.
         """
@@ -35,20 +50,20 @@ class Lexicon:
 
         if type(rule_from) == list:
             for i in rule_from:
-                old_value = reduce(Lexicon._dot, i.split('.'), target)
+                old_value = cls._dot_reduce(i, target)
                 format_data.append(old_value)
 
         if type(rule_from) == str:
-            old_value = reduce(Lexicon._dot, rule_from.split('.'), target)
+            old_value = cls._dot_reduce(rule_from, target)
             format_data.append(old_value)
         return rule['format'].format(*format_data)
 
-    @staticmethod
-    def match(rule, target, logger):
+    @classmethod
+    def match(cls, rule, target, logger):
         """
         Match rule
         """
-        old_value = reduce(Lexicon._dot, rule['match'].split('.'), target)
+        old_value = cls._dot_reduce(rule['match'], target)
         match_name = rule['match']
         if 'from' in rule:
             match_name = rule['from']
@@ -85,13 +100,13 @@ class Lexicon:
         """
         return rule['transform'][getattr(target, rule['from'])]
 
-    @staticmethod
-    def expression(rule, target, logger):
+    @classmethod
+    def expression(cls, rule, target, logger):
         """
         The expression rule runs a regular expression against the specified
         column.
         """
-        attribute = reduce(Lexicon._dot, rule['from'].split('.'), target)
+        attribute = cls._dot_reduce(rule['from'], target)
         result = re.findall(rule['expression'], attribute)
         if result:
             return result[0]
