@@ -14,6 +14,7 @@ class Cli:
     def main():
         pass
 
+    @staticmethod
     @main.command()
     @click.argument('rulesfile', required=False)
     @click.option('--verbose', '-v', count=True)
