@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from .Config import Config
-
 from .Interface import Interface
 from .Targets import Targets
 from .Tracker import Tracker, tracker_interface
