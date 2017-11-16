@@ -19,11 +19,26 @@ class Lexicon:
             return None
 
     @staticmethod
+    def _dot_reduce(rule_from, target):
+        """
+        A shorthand for _dot and reduce.
+        """
+        return reduce(Lexicon._dot, rule_from.split('.'), target)
+
+    @staticmethod
     def basic(rule, target):
         """
         The basic-most rule, which simply produces the requested value.
         """
         return reduce(Lexicon._dot, rule.split('.'), target)
+
+    @staticmethod
+    def factor(rule, target):
+        """
+        The factor rule multiplies the value by a factor.
+        """
+        value = Lexicon._dot_reduce(rule['from'], target)
+        return value * rule['factor']
 
     @staticmethod
     def format(rule, target):

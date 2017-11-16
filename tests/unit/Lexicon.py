@@ -48,6 +48,19 @@ def test_lexicon_transform(target):
     assert result == rule['transform'][target.temperature]
 
 
+@mark.parametrize('from_data, target', [
+    ('value', MagicMock(value=100)),
+    ('related.value', MagicMock(related=MagicMock(value=100)))
+])
+def test_lexicon_factor(from_data, target):
+    rule = {
+        'from': from_data,
+        'factor': 0.5
+    }
+    result = Lexicon.factor(rule, target)
+    assert result == 50
+
+
 @mark.parametrize('from_data, format, expected', [
     ('birthyear', '{}-0-0', '1992-0-0'),
     (['birthyear', 'birthmonth'], '{}-{}-0', '1992-9-0')
