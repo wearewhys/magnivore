@@ -21,6 +21,8 @@ class Transformer():
                 value = Lexicon.basic(rule, target)
             elif 'transform' in rule:
                 value = Lexicon.transform(rule, target)
+            elif 'factor' in rule:
+                value = Lexicon.factor(rule, target)
             elif 'format' in rule:
                 value = Lexicon.format(rule, target)
             elif 'match' in rule:

@@ -118,6 +118,20 @@ def test_item_values_expression(mocker, transformer, logger):
     assert values['age'] == Lexicon.expression()
 
 
+def test_item_values_factor(mocker, transformer, logger):
+    mocker.patch.object(Lexicon, 'factor')
+    transformations = {
+        'age': {
+            'factor': {}
+        }
+    }
+    target = MagicMock()
+    transformer.transformations = transformations
+    values = transformer.item_values(target)
+    Lexicon.factor.assert_called_with(transformations['age'], target)
+    assert values['age'] == Lexicon.factor()
+
+
 def test_transform(mocker, transformer):
     mocker.patch.object(Transformer, 'item_values')
     target = MagicMock()
