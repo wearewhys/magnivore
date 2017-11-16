@@ -30,7 +30,7 @@ class Lexicon:
         """
         The basic-most rule, which simply produces the requested value.
         """
-        return reduce(Lexicon._dot, rule.split('.'), target)
+        return Lexicon._dot_reduce(rule, target)
 
     @staticmethod
     def factor(rule, target):
@@ -50,11 +50,11 @@ class Lexicon:
 
         if type(rule_from) == list:
             for i in rule_from:
-                old_value = reduce(Lexicon._dot, i.split('.'), target)
+                old_value = Lexicon._dot_reduce(i, target)
                 format_data.append(old_value)
 
         if type(rule_from) == str:
-            old_value = reduce(Lexicon._dot, rule_from.split('.'), target)
+            old_value = Lexicon._dot_reduce(rule_from, target)
             format_data.append(old_value)
         return rule['format'].format(*format_data)
 
@@ -63,7 +63,7 @@ class Lexicon:
         """
         Match rule
         """
-        old_value = reduce(Lexicon._dot, rule['match'].split('.'), target)
+        old_value = Lexicon._dot_reduce(rule['match'], target)
         match_name = rule['match']
         if 'from' in rule:
             match_name = rule['from']
@@ -106,7 +106,7 @@ class Lexicon:
         The expression rule runs a regular expression against the specified
         column.
         """
-        attribute = reduce(Lexicon._dot, rule['from'].split('.'), target)
+        attribute = Lexicon._dot_reduce(rule['from'], target)
         result = re.findall(rule['expression'], attribute)
         if result:
             return result[0]
