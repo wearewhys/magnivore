@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, call
 from magnivore.Targets import Targets
 
 from peewee import fn
+
 from pytest import fixture, raises
 
 
