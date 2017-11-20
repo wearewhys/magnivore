@@ -193,6 +193,24 @@ def test_get_aggregations_eq(mocker, targets, joins, nodes, nodes_query):
     assert nodes_query.join().group_by().having().execute.call_count == 1
 
 
+def test_get_picks(targets, joins, nodes, nodes_query):
+    joins[0]['picks'] = {
+        'field': True
+    }
+    targets.get(joins)
+    nodes.select.assert_called_with(nodes.field)
+    assert nodes_query.join().execute.call_count == 1
+
+
+def test_get_picks_sum(targets, joins, nodes, nodes_query):
+    joins[0]['picks'] = {
+        'field': 'sum'
+    }
+    targets.get(joins)
+    nodes.select.assert_called_with(fn.Sum(nodes.field))
+    assert nodes_query.join().execute.call_count == 1
+
+
 def test_get_log_query(targets, joins, nodes_query, logger):
     targets.get(joins)
     calls = [call.logger.log('get-targets', nodes_query.join())]
