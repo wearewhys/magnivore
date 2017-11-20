@@ -1,6 +1,6 @@
 Magnivore
 #########
-|Pypi|
+|Pypi| |Travis|
 
 A data migration tool built to make migrating entire databases as simple as
 writing json migration rules.
@@ -70,3 +70,6 @@ that your table names have no dashes.
 
 .. |Pypi| image:: https://img.shields.io/pypi/v/magnivore.svg?maxAge=3600&style=flat-square
    :target: https://pypi.python.org/pypi/magnivore
+
+.. |Travis| image:: https://img.shields.io/travis/wearewhys/magnivore.svg?style=flat-square
+    :target: https://travis-ci.org/wearewhys/magnivore
