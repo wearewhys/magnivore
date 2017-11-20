@@ -8,23 +8,23 @@ class Targets:
         self.source_models = source_models
         self.logger = logger
 
-    def _apply_aggregation(self, query, joins):
-        model = self.source_models[joins['table']]
-        model_field = getattr(model,  joins['aggregation']['group'])
+    def _apply_aggregation(self, query, source):
+        model = self.source_models[source['table']]
+        model_field = getattr(model,  source['aggregation']['group'])
         query = query.group_by(model_field)
-        aggregation = joins['aggregation']['function']
+        aggregation = source['aggregation']['function']
         if aggregation == 'count':
             aggregation_function = fn.Count(model_field)
-        condition = joins['aggregation']['condition']
+        condition = source['aggregation']['condition']
         if condition['operator'] == 'gt':
             query = query.having(aggregation_function > condition['value'])
         elif condition['operator'] == 'eq':
             query = query.having(aggregation_function == condition['value'])
         return query
 
-    def _apply_condition(self, query, joins):
-        conditions = joins['conditions']
-        model = self.source_models[joins['table']]
+    def _apply_condition(self, query, source):
+        conditions = source['conditions']
+        model = self.source_models[source['table']]
         for field, condition in conditions.items():
             model_field = getattr(model, field)
             if type(condition) == dict:
@@ -43,15 +43,15 @@ class Targets:
                 query = query.where(model_field == condition)
         return query
 
-    def _apply_join(self, query, join, models):
-        model = self.source_models[join['table']]
+    def _apply_join(self, query, source, models):
+        model = self.source_models[source['table']]
 
         previous_model = models[models.index(model)-1]
-        if 'switch' in join:
-            if join['switch']:
+        if 'switch' in source:
+            if source['switch']:
                 previous_model = models[0]
 
-        on = join['on']
+        on = source['on']
         if type(on) is list:
             left_side = getattr(previous_model, on[0])
             right_side = getattr(model, on[1])
@@ -59,44 +59,44 @@ class Targets:
         else:
             expression = getattr(model, on)
 
-        if 'switch' in join:
+        if 'switch' in source:
             query = query.switch(models[0])
 
-        if 'outer' in join:
+        if 'outer' in source:
             return query.join(model, 'LEFT OUTER', on=expression)
         return query.join(model, on=expression)
 
-    def _apply_pick(self, query, join):
-        model = self.source_models[join['table']]
+    def _apply_pick(self, query, source):
+        model = self.source_models[source['table']]
         selects = []
-        for column, value in join['picks'].items():
+        for column, value in source['picks'].items():
             if value is True:
                 selects.append(getattr(model, column))
             elif value == 'sum':
                 selects.append(fn.Sum(getattr(model, column)))
         return query.select(*selects)
 
-    def get(self, joins, limit=None, offset=0):
+    def get(self, sources, limit=None, offset=0):
         """
         Retrieves the targets for the given joins
         """
-        if len(joins) == 0:
+        if len(sources) == 0:
             raise ValueError
 
         aggregations = []
         conditions = []
         models = []
         picks = []
-        for join in joins:
-            models.append(self.source_models[join['table']])
-            if 'conditions' in join:
-                conditions.append(join)
+        for source in sources:
+            models.append(self.source_models[source['table']])
+            if 'conditions' in source:
+                conditions.append(source)
 
-            if 'aggregation' in join:
-                aggregations.append(join)
+            if 'aggregation' in source:
+                aggregations.append(source)
 
-            if 'picks' in join:
-                picks.append(join)
+            if 'picks' in source:
+                picks.append(source)
 
         query = models[0]
         if picks == []:
@@ -104,9 +104,9 @@ class Targets:
         for pick in picks:
             query = self._apply_pick(query, pick)
 
-        joins.pop(0)
-        for join in joins:
-            query = self._apply_join(query, join, models)
+        sources.pop(0)
+        for source in sources:
+            query = self._apply_join(query, source, models)
 
         for condition in conditions:
             query = self._apply_condition(query, condition)
