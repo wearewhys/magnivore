@@ -22,7 +22,7 @@ setup(
     author='Jacopo Cascioli',
     author_email='jacopocascioli@gmail.com',
     license='Apache 2',
-    version='0.3.1',
+    version='0.4.0',
     packages=find_packages(),
     tests_require=[
         'pytest',
