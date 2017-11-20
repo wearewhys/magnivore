@@ -14,11 +14,11 @@ def interface(config_setup):
 
 def test_get(interface, donor_setup, receiver_setup, tracker_setup):
     targets = Targets(interface.donor(), Logger())
-    joins = [
+    sources = [
         {'table': 'users'},
         {'table': 'addresses', 'on': 'user'}
     ]
-    items = targets.get(joins)
+    items = targets.get(sources)
     results = []
     for item in items:
         results.append(item)
