@@ -12,7 +12,7 @@ A simple migration rule::
 
     {
         "profiles": {
-            "joins": [
+            "sources": [
                 {"table": "users"},
                 {"table": "addresses", "on":"user"}
             ],
