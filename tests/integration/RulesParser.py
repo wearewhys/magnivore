@@ -9,7 +9,7 @@ from pytest import fixture
 def rules():
     rules = {
         'profiles': {
-            'joins': [
+            'sources': [
                 {'table': 'users'},
                 {'table': 'addresses', 'on': 'user'}
             ],
@@ -60,7 +60,7 @@ def test_transform_match(logger, config_setup, donor_setup, receiver_setup,
     rules['profiles']['track'] = 'editor'
     article_rules = {
         'articles': {
-            'joins': [
+            'sources': [
                 {'table': 'posts'}
             ],
             'transform': {

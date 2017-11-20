@@ -14,7 +14,7 @@ from pytest import fixture
 def rules():
     rules = {
         'profiles': {
-            'joins': [
+            'sources': [
                 {'table': 'nodes'},
                 {'table': 'points', 'on': 'node'}
             ],
