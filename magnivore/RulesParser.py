@@ -21,7 +21,7 @@ class RulesParser():
 
     def _process(self, table, table_rules):
         model = self.receiver[table]
-        targets = self.targets.get(table_rules['joins'])
+        targets = self.targets.get(table_rules['sources'])
 
         if 'transform' in table_rules:
             transformations = table_rules['transform']
