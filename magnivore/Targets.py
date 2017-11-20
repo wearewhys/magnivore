@@ -66,6 +66,16 @@ class Targets:
             return query.join(model, 'LEFT OUTER', on=expression)
         return query.join(model, on=expression)
 
+    def _apply_pick(self, query, join):
+        model = self.source_models[join['table']]
+        selects = []
+        for column, value in join['picks'].items():
+            if value is True:
+                selects.append(getattr(model, column))
+            elif value == 'sum':
+                selects.append(fn.Sum(getattr(model, column)))
+        return query.select(*selects)
+
     def get(self, joins, limit=None, offset=0):
         """
         Retrieves the targets for the given joins
@@ -76,6 +86,7 @@ class Targets:
         aggregations = []
         conditions = []
         models = []
+        picks = []
         for join in joins:
             models.append(self.source_models[join['table']])
             if 'conditions' in join:
@@ -84,7 +95,14 @@ class Targets:
             if 'aggregation' in join:
                 aggregations.append(join)
 
-        query = models[0].select(*models)
+            if 'picks' in join:
+                picks.append(join)
+
+        query = models[0]
+        if picks == []:
+            query = query.select(*models)
+        for pick in picks:
+            query = self._apply_pick(query, pick)
 
         joins.pop(0)
         for join in joins:
