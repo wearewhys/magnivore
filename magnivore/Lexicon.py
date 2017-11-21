@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from decimal import Decimal
 from functools import reduce
 
 from .Tracker import Tracker
@@ -38,7 +39,8 @@ class Lexicon:
         The factor rule multiplies the value by a factor.
         """
         value = cls._dot_reduce(rule['from'], target)
-        return value * rule['factor']
+        original_type = type(value)
+        return original_type(Decimal(value) * Decimal(rule['factor']))
 
     @classmethod
     def format(cls, rule, target):

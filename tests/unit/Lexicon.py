@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from decimal import Decimal
 from unittest.mock import MagicMock
 
 from magnivore.Lexicon import Lexicon
@@ -48,17 +49,20 @@ def test_lexicon_transform(target):
     assert result == rule['transform'][target.temperature]
 
 
-@mark.parametrize('from_data, target', [
-    ('value', MagicMock(value=100)),
-    ('related.value', MagicMock(related=MagicMock(value=100)))
+@mark.parametrize('from_data, target, expected', [
+    ('value', MagicMock(value=100), 50),
+    ('value', MagicMock(value=Decimal(100)), Decimal(50)),
+    ('value', MagicMock(value=100.0), 50.0),
+    ('related.value', MagicMock(related=MagicMock(value=100)), 50)
 ])
-def test_lexicon_factor(from_data, target):
+def test_lexicon_factor(from_data, target, expected):
     rule = {
         'from': from_data,
         'factor': 0.5
     }
     result = Lexicon.factor(rule, target)
-    assert result == 50
+    assert result == expected
+    assert type(result) == type(expected)
 
 
 @mark.parametrize('from_data, format, expected', [
