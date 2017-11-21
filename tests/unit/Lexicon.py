@@ -65,6 +65,19 @@ def test_lexicon_factor(from_data, target, expected):
     assert type(result) == type(expected)
 
 
+@mark.parametrize('rounding, expected', [
+    ('down', 47),
+    ('up', 48)
+])
+def test_lexicon_factor_round(rounding, expected):
+    rule = {
+        'from': 'value',
+        'round': rounding,
+        'factor': 0.5
+    }
+    assert Lexicon.factor(rule, MagicMock(value=95)) == expected
+
+
 @mark.parametrize('from_data, format, expected', [
     ('birthyear', '{}-0-0', '1992-0-0'),
     (['birthyear', 'birthmonth'], '{}-{}-0', '1992-9-0')

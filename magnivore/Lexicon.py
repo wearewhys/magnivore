@@ -2,6 +2,7 @@
 import re
 from decimal import Decimal
 from functools import reduce
+from math import ceil, floor
 
 from .Tracker import Tracker
 
@@ -40,7 +41,12 @@ class Lexicon:
         """
         value = cls._dot_reduce(rule['from'], target)
         original_type = type(value)
-        return original_type(Decimal(value) * Decimal(rule['factor']))
+        result = Decimal(value) * Decimal(rule['factor'])
+        if 'round' in rule:
+            if rule['round'] == 'up':
+                return original_type(ceil(result))
+            return original_type(floor(result))
+        return original_type(result)
 
     @classmethod
     def format(cls, rule, target):
